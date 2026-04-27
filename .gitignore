@@ -4,11 +4,10 @@ backend/node_modules/
 frontend/node_modules/
 
 # Build outputs
+dist/
+build/
 frontend/dist/
 frontend/build/
-backend/dist/
-build/
-dist/
 
 # Environment variables
 .env
@@ -25,27 +24,17 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# OS specific files
+# OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# IDEs and Editors
+# IDEs
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
 # Testing
 coverage/
 
-# Misc
+# Hosting
 .vercel
 .netlify
