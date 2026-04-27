@@ -1,0 +1,115 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Full-Stack Application Deployment Guide</title>
+<style>
+    body { font-family: 'Calibri', 'Arial', sans-serif; line-height: 1.6; color: #333; }
+    h1 { color: #2C3E50; text-align: center; }
+    h2 { color: #34495E; border-bottom: 2px solid #34495E; padding-bottom: 5px; margin-top: 30px; }
+    h3 { color: #2980B9; }
+    ul { margin-bottom: 20px; }
+    li { margin-bottom: 8px; }
+    code { background-color: #e8e8e8; padding: 2px 5px; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; }
+    .code-block { background-color: #f4f4f4; padding: 15px; border-left: 4px solid #2980B9; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; margin: 10px 0; }
+    .note { background-color: #fff3cd; padding: 10px; border-left: 4px solid #ffeeba; margin: 10px 0; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Full-Stack Application Deployment Guide</h1>
+<p><strong>Project:</strong> Interest Management Web Application</p>
+<p><strong>Stack:</strong> MERN (MongoDB, Express, React/Vite, Node.js)</p>
+<hr>
+
+<h2>Step 1: Database Setup (MongoDB Atlas)</h2>
+<p>Move your local database to the cloud so your live backend can connect to it.</p>
+<ul>
+    <li>Go to <a href="https://www.mongodb.com/cloud/atlas/register">MongoDB Atlas</a> and create a free account.</li>
+    <li>Build a new cluster (select the <strong>Free Tier / M0 Sandbox</strong>).</li>
+    <li>Navigate to <strong>Database Access</strong> on the left menu. Create a new database user (e.g., username: <code>admin</code>, password: <code>your_password</code>). <em>Note: Keep this password safe.</em></li>
+    <li>Navigate to <strong>Network Access</strong> on the left menu. Click "Add IP Address", choose <strong>"Allow Access from Anywhere"</strong> (<code>0.0.0.0/0</code>), and confirm. This allows your live backend to communicate with the database.</li>
+    <li>Go back to <strong>Database</strong> under the Deployment section. Click <strong>Connect</strong> &rarr; <strong>Drivers</strong> &rarr; <strong>Node.js</strong>.</li>
+    <li>Copy the <strong>Connection String</strong> provided. It will look like this:
+        <div class="code-block">mongodb+srv://admin:&lt;password&gt;@cluster0.xxxxx.mongodb.net/InterestManagement?retryWrites=true&amp;w=majority</div>
+        <em>(Replace <code>&lt;password&gt;</code> with the password you created earlier)</em>.
+    </li>
+</ul>
+
+<h2>Step 2: Version Control (GitHub)</h2>
+<p>Push your source code to GitHub so deployment platforms can access it.</p>
+<ul>
+    <li>Go to <a href="https://github.com/">GitHub</a> and log in or create an account.</li>
+    <li>Create a <strong>New Repository</strong> (e.g., <code>interest-management-app</code>).</li>
+    <li>Open your terminal in the <code>Website_Interest</code> root folder on your computer.</li>
+    <li>Run the following Git commands:
+        <div class="code-block">
+            git init<br>
+            git add .<br>
+            git commit -m "Initial commit for deployment"<br>
+            git branch -M main<br>
+            git remote add origin https://github.com/YOUR_USERNAME/interest-management-app.git<br>
+            git push -u origin main
+        </div>
+    </li>
+</ul>
+<div class="note"><strong>Important Note:</strong> Ensure your <code>backend/.env</code> file is listed inside your <code>.gitignore</code> file so your database passwords are not uploaded to the public internet!</div>
+
+<h2>Step 3: Backend Deployment (Render)</h2>
+<p>Deploy your Node.js and Express backend logic.</p>
+<ul>
+    <li>Go to <a href="https://render.com/">Render.com</a> and sign in using your GitHub account.</li>
+    <li>Click <strong>New</strong> &rarr; <strong>Web Service</strong>.</li>
+    <li>Select your newly created GitHub repository from the list.</li>
+    <li>Configure the deployment settings:
+        <ul>
+            <li><strong>Name:</strong> <code>interest-backend</code></li>
+            <li><strong>Root Directory:</strong> <code>backend</code> <em>(Crucial step!)</em></li>
+            <li><strong>Environment:</strong> <code>Node</code></li>
+            <li><strong>Build Command:</strong> <code>npm install</code></li>
+            <li><strong>Start Command:</strong> <code>node server.js</code></li>
+        </ul>
+    </li>
+    <li>Scroll down to <strong>Environment Variables</strong> and add the exact variables from your local <code>backend/.env</code> file:
+        <ul>
+            <li>Key: <code>MONGO_URI</code> | Value: <em>(Paste your MongoDB Atlas Connection string here)</em></li>
+            <li>Key: <code>JWT_SECRET</code> | Value: <code>supersecret123</code> <em>(Or your chosen secret)</em></li>
+            <li>Key: <code>PORT</code> | Value: <code>5000</code></li>
+        </ul>
+    </li>
+    <li>Click <strong>Create Web Service</strong>.</li>
+    <li>Wait a few minutes for the build to finish. Once it says "Live", copy your new live backend URL at the top left (e.g., <code>https://interest-backend.onrender.com</code>).</li>
+</ul>
+
+<h2>Step 4: Frontend Deployment (Vercel)</h2>
+<p>Deploy your React/Vite user interface.</p>
+<ul>
+    <li>Go to <a href="https://vercel.com/">Vercel.com</a> and sign in using your GitHub account.</li>
+    <li>Click <strong>Add New</strong> &rarr; <strong>Project</strong>.</li>
+    <li>Import your GitHub repository.</li>
+    <li>Under <strong>Root Directory</strong>, click "Edit" and select your <code>frontend</code> folder.</li>
+    <li>Expand the <strong>Environment Variables</strong> section and add your backend connection URL:
+        <ul>
+            <li>Name: <code>VITE_API_URL</code></li>
+            <li>Value: <code>https://interest-backend.onrender.com/api</code> <em>(Paste the exact URL Render gave you, and make sure to append <code>/api</code> at the end)</em></li>
+        </ul>
+    </li>
+    <li>Click <strong>Deploy</strong>.</li>
+    <li>Wait 1-2 minutes. Vercel will process the build and provide a live frontend URL (e.g., <code>https://interest-app.vercel.app</code>).</li>
+</ul>
+
+<h2>Step 5: Testing on Mobile</h2>
+<p>Verify that your full-stack deployment is fully operational.</p>
+<ul>
+    <li>Open the browser on your Android smartphone.</li>
+    <li>Navigate to your new <strong>Vercel frontend link</strong> (e.g., <code>https://interest-app.vercel.app</code>).</li>
+    <li>Log in using your admin credentials.</li>
+    <li>Perform a test action, such as adding a new customer.</li>
+    <li>If the customer saves successfully, your frontend has successfully communicated with your Render backend, which in turn saved the data to your MongoDB Atlas cloud database!</li>
+    <li><strong>Optional:</strong> Use your browser's "Add to Home Screen" feature to save the site as a mobile application icon on your phone.</li>
+</ul>
+
+<hr>
+<p style="text-align: center; color: #7f8c8d; font-size: 12px;">Generated via Antigravity AI</p>
+
+</body>
+</html>
