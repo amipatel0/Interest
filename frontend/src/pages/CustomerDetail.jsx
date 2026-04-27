@@ -153,7 +153,7 @@ const CustomerDetail = () => {
                         <span className="fw-bold">₹ {Number(calc.monthly_interest).toLocaleString('en-IN')}</span>
                     </div>
                     <div className="col-4 border-start border-end border-light border-opacity-25">
-                        <small className="text-white-50 d-block">Yearly Interestlistern carefully to me i have developed website now i want to use in mobile as application and that access provideto my friend  so provide correct and working steps for use website in mobile(android) as application </small>
+                        <small className="text-white-50 d-block">Yearly Interest</small>
                         <span className="fw-bold">₹ {Number(calc.yearly_interest).toLocaleString('en-IN')}</span>
                     </div>
                     <div className="col-4">
